@@ -19,7 +19,7 @@ env:
 jobs:
   # Taken from ci.yml, minor modifications
   benchmarks-walltime:
-    runs-on: codspeed-macro-staging
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       TY_LOG: ruff_benchmark=debug
