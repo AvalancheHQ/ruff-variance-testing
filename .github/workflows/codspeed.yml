@@ -65,5 +65,6 @@ jobs:
       - name: "Run benchmarks"
         env:
           CODSPEED_USE_PERF: 1
+          CODSPEED_PERF_SAMPLE_FREQ: 99
           # CODSPEED_LOG: debug
         run: codspeed run --api-url https://7j3xul0pqk.execute-api.eu-west-1.amazonaws.com/dev/ --upload-url https://aiy2l19wii.execute-api.eu-west-1.amazonaws.com/upload -- cargo codspeed run
