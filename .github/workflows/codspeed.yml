@@ -19,11 +19,11 @@ env:
 jobs:
   # Taken from ci.yml, minor modifications
   benchmarks-walltime:
-    runs-on: codspeed-macro-staging
+    runs-on: codspeed-macro-codspeed-matthias-dev
     timeout-minutes: 20
     env:
       TY_LOG: ruff_benchmark=debug
-      CODSPEED_RUNNER_MODE: "walltime"
+      CODSPEED_RUNNER_MODE: walltime
     steps:
       - name: "Checkout Branch"
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -44,14 +44,26 @@ jobs:
       - name: "Build benchmarks"
         run: cargo codspeed build --features "codspeed,walltime" --no-default-features -p ruff_benchmark
 
+      # - name: "Run benchmarks"
+      #   uses: CodSpeedHQ/action@0010eb0ca6e89b80c88e8edaaa07cfe5f3e6664d # v3.5.0
+      #   env:
+      #     CODSPEED_ENV: 1
+      #     CODSPEED_LOG: debug
+      #     CODSPEED_USE_PERF: 1
+      #   with:
+      #     run: cargo codspeed run
+      #     token: ${{ secrets.CODSPEED_TOKEN }}
+      #     runner-version: 3.6.0-beta.3
+      #     upload-url: https://api.staging.preview.codspeed.io/upload
+
+      - name: "Install custom runner"
+        run: |
+          git clone -b cod-1010-benchmark-setup-is-slow-when-running-with-isolated-cores https://github.com/CodSpeedHQ/runner/
+          cd runner
+          cargo install --path . -f --locked
+
       - name: "Run benchmarks"
-        uses: CodSpeedHQ/action@0010eb0ca6e89b80c88e8edaaa07cfe5f3e6664d # v3.5.0
         env:
-          CODSPEED_ENV: 1
-          CODSPEED_LOG: debug
           CODSPEED_USE_PERF: 1
-        with:
-          run: cargo codspeed run
-          token: ${{ secrets.CODSPEED_TOKEN }}
-          runner-version: 3.6.0-beta.3
-          upload-url: https://api.staging.preview.codspeed.io/upload
+          # CODSPEED_LOG: debug
+        run: codspeed run --api-url https://7j3xul0pqk.execute-api.eu-west-1.amazonaws.com/dev/ --upload-url https://aiy2l19wii.execute-api.eu-west-1.amazonaws.com/upload -- cargo codspeed run
